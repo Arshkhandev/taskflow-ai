@@ -21,3 +21,20 @@ export const createBoardService = async (boardData, userId) => {
     updatedAt: board.updatedAt,
   };
 };
+
+export const getBoardsService = async (userId) => {
+  const boards = await Board.find({
+    owner: userId,
+    isArchived: false,
+  }).sort({ createdAt: -1 });
+
+  return boards.map((board) => ({
+    id: board._id,
+    title: board.title,
+    description: board.description,
+    color: board.color,
+    isArchived: board.isArchived,
+    createdAt: board.createdAt,
+    updatedAt: board.updatedAt,
+  }));
+};
