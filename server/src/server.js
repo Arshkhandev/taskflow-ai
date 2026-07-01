@@ -1,11 +1,24 @@
 import dotenv from "dotenv";
-import app from "./app.js";
-
 dotenv.config();
 
+import app from "./app.js";
+import connectDB from "./config/db.js";
 
-const PORT = process.env.PORT || 5000 ;
+const PORT = process.env.PORT || 5000;
 
-app.listen(PORT , () => {
-     console.log(`app running in the http://localhost:${PORT}`);
-})
+const startServer = async () => {
+  try {
+    await connectDB();
+
+    app.listen(PORT, () => {
+      console.log("=================================");
+      console.log("🚀 TaskFlow AI Backend Started");
+      console.log(`🌐 http://localhost:${PORT}`);
+      console.log("=================================");
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+startServer();

@@ -1,32 +1,40 @@
 import jwt from "jsonwebtoken";
 
-const protect = (req, res, next) => {
-  try {
-    const authHeader = req.headers.authorization;
+import User from "../models/User.js";
+import ApiError from "../utils/ApiError.js";
+import asyncHandler from "../utils/asyncHandler.js";
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized",
-      });
-    }
+export const protect = asyncHandler(async (req, res, next) => {
+  let token;
 
-    const token = authHeader.split(" ")[1];
-
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET
-    );
-
-    req.user = decoded;
-
-    next();
-  } catch (error) {
-    return res.status(401).json({
-      success: false,
-      message: "Invalid Token",
-    });
+  // Check Authorization Header
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer ")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
   }
-};
 
-export default protect;
+  // No Token
+  if (!token) {
+    throw new ApiError(401, "Access denied. No token provided.");
+  }
+
+  // Verify Token
+  const decoded = jwt.verify(
+    token,
+    process.env.JWT_SECRET
+  );
+
+  // Find User
+  const user = await User.findById(decoded.id);
+
+  if (!user) {
+    throw new ApiError(401, "User no longer exists.");
+  }
+
+  // Attach User To Request
+  req.user = user;
+
+  next();
+});
