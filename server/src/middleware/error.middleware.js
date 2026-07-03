@@ -1,12 +1,17 @@
 const errorHandler = (err, req, res, next) => {
+  let statusCode = err.statusCode || 500;
+  let message = err.message || "Internal Server Error";
 
-  const statusCode = err.statusCode || 500;
+  // Handle invalid MongoDB ObjectId
+  if (err.name === "CastError") {
+    statusCode = 400;
+    message = "Invalid resource ID.";
+  }
 
   res.status(statusCode).json({
     success: false,
-    message: err.message || "Internal Server Error",
+    message,
   });
-
 };
 
 export default errorHandler;

@@ -21,10 +21,16 @@ export const protect = asyncHandler(async (req, res, next) => {
   }
 
   // Verify Token
-  const decoded = jwt.verify(
-    token,
-    process.env.JWT_SECRET
-  );
+  let decoded;
+
+  try {
+    decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
+  } catch (error) {
+    throw new ApiError(401, "Invalid or expired token.");
+  }
 
   // Find User
   const user = await User.findById(decoded.id);
