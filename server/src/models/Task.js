@@ -1,0 +1,51 @@
+import mongoose from "mongoose";
+
+const taskSchema = new mongoose.Schema(
+  {
+    board: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Board",
+      required: [true, "Board is required"],
+    },
+
+    title: {
+      type: String,
+      required: [true, "Task title is required"],
+      trim: true,
+    },
+
+    description: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    status: {
+      type: String,
+      enum: ["todo", "in-progress", "done"],
+      default: "todo",
+    },
+
+    priority: {
+      type: String,
+      enum: ["low", "medium", "high"],
+      default: "medium",
+    },
+
+    dueDate: {
+      type: Date,
+    },
+
+    isArchived: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+const Task = mongoose.model("Task", taskSchema);
+
+export default Task;
