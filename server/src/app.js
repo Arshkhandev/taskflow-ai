@@ -6,7 +6,7 @@ import authRoutes from "./routes/auth.routes.js";
 import errorHandler from "./middleware/error.middleware.js";
 import boardRoutes from "./routes/board.routes.js";
 import taskRoutes from "./routes/task.routes.js";
-
+import aiRoutes from "./routes/ai.routes.js";
 
 const app = express();
 
@@ -30,7 +30,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/boards", boardRoutes);
 app.use("/api/tasks", taskRoutes);
-
+app.use("/api/ai", aiRoutes);
 app.use(errorHandler);
 
 
